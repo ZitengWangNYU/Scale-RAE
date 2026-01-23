@@ -1,0 +1,14 @@
+{
+    "fsdp_transformer_layer_cls_to_wrap": [
+        "Qwen2DecoderLayer",
+        "dit_blocks"
+],
+    "xla": true,
+    "xla_fsdp_settings": {
+        "compute_dtype": "bfloat16",
+        "shard_param_on_dim_0": true,
+        "pin_layout_in_collective_ops": true
+    },
+    "xla_fsdp_v2": true,
+    "xla_fsdp_grad_ckpt": true
+}

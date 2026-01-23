@@ -1,0 +1,58 @@
+# Project-specific
+wandb/
+downloaded_checkpoints/
+checkpoints/
+ckpt/
+ckpt_gcs/
+decoder/
+mmprojector_and_visionhead.pth
+*.code-workspace
+
+# Downloaded files
+*.whl
+wds_*.json
+
+# Inference outputs
+inference/outputs/*.png
+inference/outputs/*.json
+inference/outputs/*.pt
+inference/outputs/**/
+inference/scaling_outputs/
+inference/ImageReward/
+
+# WebDataset state
+.webds_state/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.coverage
+*.cover
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Logs
+*.log

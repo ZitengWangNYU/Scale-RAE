@@ -1,0 +1,1 @@
+ Your task is to analyze and compare the image based on how well they match the given prompt. Please consider the prompt and the image to make a decision and respond in the format of "Answer": "yes" / "no". 

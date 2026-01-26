@@ -199,13 +199,16 @@ def build_decoder(model, model_path: Optional[str] = None, decoder_repo_id: str 
             "patch_size": int(getattr(model.config, "patch_size", 2)),
         }
 
-    # RAE / SigLIP Mode - Download decoder from Hugging Face
+    # RAE Mode - Download decoder from Hugging Face
     # print(f"Loading decoder from Hugging Face: {decoder_repo_id}...")
     config_path = hf_hub_download(repo_id=decoder_repo_id, filename="config.json")
     ckpt_path = hf_hub_download(repo_id=decoder_repo_id, filename="model.pt")
     
+    # Get encoder path from model config (strip interpolation suffix)
+    encoder_path = model.config.mm_vision_tower_aux_list[0].split('-interp')[0]
+    
     decoder_params = {
-        "pretrained_encoder_path": "google/siglip2-so400m-patch14-224",
+        "pretrained_encoder_path": encoder_path,
         "general_decoder_config": config_path,
         "num_patches": 256,
         "drop_cls_token": True,

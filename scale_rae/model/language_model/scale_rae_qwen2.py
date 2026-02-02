@@ -394,7 +394,10 @@ class ScaleRAEQwenForCausalLM(Qwen2ForCausalLM, ScaleRAEMetaForCausalLM):
         self.vision_coef = getattr(config, 'vision_coef', 1.0)
         self.vision_tower_aux_token_len_list = getattr(config, 'vision_tower_aux_token_len_list', [256])  # Default vision token length
         self.diffusion_model_channels = getattr(config, 'diffusion_model_channels', 1152)
-        self.num_image_tokens = 256 # fixed
+        # num_image_tokens: Use diffusion_split_per_token for DiT-based models (what DiT expects)
+        # For WebMAE and similar models where si_token_len == diffusion_split_per_token, this also works
+        # Default to 256 for backward compatibility
+        self.num_image_tokens = getattr(config, 'diffusion_split_per_token', 256)
         self.debug = False
         if self.vision_loss == 'diffusion-loss' or self.vision_loss == 'ddt-loss':
             if self.vision_loss_mode == 'causal':
@@ -821,22 +824,28 @@ class ScaleRAEQwenForCausalLM(Qwen2ForCausalLM, ScaleRAEMetaForCausalLM):
                 hidden_pred_z = pred_z.clone().detach()
                  # (B, hidden_dim) for next toekn, (B, L, hidden_dim) for multiple tokens
                 
-                # Ensure diff_head is on the same device as pred_z (important for multi-GPU with accelerate)
-                target_device = pred_z.device
-                self.diff_head = self.diff_head.to(target_device)
+                # For multi-GPU: move input to diff_head's device instead of moving diff_head
+                # This avoids issues with accelerate hooks that keep modules on their assigned devices
+                diff_head_device = next(self.diff_head.parameters()).device
+                pred_z = pred_z.to(diff_head_device)
                 
                 if self.use_diff_head_projector:
+                    self.diff_head_projector = self.diff_head_projector.to(diff_head_device)
                     pred_z = self.diff_head_projector(pred_z)
 
                 pred_z = self.diff_head.infer(pred_z, guidance_level=guidance_level)
 
-
+                # Move pred_z back to mm_projector's device for projection
                 try:
-
-                    prediction = self.get_model().mm_projector(pred_z)
+                    mm_proj = self.get_model().mm_projector
+                    mm_proj_device = next(mm_proj.parameters()).device
+                    pred_z = pred_z.to(mm_proj_device)
+                    prediction = mm_proj(pred_z)
                 except:
                     prediction = hidden_pred_z.clone().detach()
 
+                # Move prediction back to hidden_states device
+                prediction = prediction.to(hidden_states.device)
                 hidden_states[:, -generated_token_length:, :] = prediction
                 
             

@@ -80,15 +80,25 @@ def load_pretrained_model(model_path, model_base=None, model_name="",
     if 'torch_dtype' in kwargs:
         kwargs['torch_dtype'] = None
     
+    # Enable low_cpu_mem_usage to reduce peak memory during loading
+    kwargs['low_cpu_mem_usage'] = True
+    
     model = ScaleRAEQwenForCausalLM.from_pretrained(
         model_path,
         **kwargs
     )
 
     # Load vision towers for multimodal processing
+    # Note: Vision towers are loaded separately and placed on the model's device
     vision_tower_aux_list = model.get_vision_tower_aux_list()
     for vision_tower_aux in vision_tower_aux_list:
         vision_tower_aux.load_model()
+        # Move vision tower to the same device as the model's first parameter
+        if hasattr(model, 'device') and model.device.type != 'meta':
+            try:
+                vision_tower_aux.vision_tower = vision_tower_aux.vision_tower.to(model.device)
+            except Exception as e:
+                logger.warning(f"Could not move vision tower to {model.device}: {e}")
     image_processor = [vision_tower_aux.image_processor for vision_tower_aux in vision_tower_aux_list]
 
     # Get context length from model config

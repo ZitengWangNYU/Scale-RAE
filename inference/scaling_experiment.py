@@ -82,7 +82,8 @@ def write_metadata(metadata_path: str, metadata: Dict) -> None:
 
 
 def load_model(model_path: str, device: str = "cuda"):
-    tokenizer, model, image_processor, context_len = load_scale_rae_model(model_path, device=device)
+    """Load model. Uses multi-GPU automatically if available."""
+    tokenizer, model, image_processor, context_len = load_scale_rae_model(model_path)
     return tokenizer, model, image_processor, context_len
 
 

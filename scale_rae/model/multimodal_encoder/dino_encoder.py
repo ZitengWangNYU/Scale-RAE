@@ -18,6 +18,7 @@ def extract_res_interp(model_name):
         "facebook/dinov2-giant-imagenet1k-1-layer",
         "facebook/dinov2-giant",
         "facebook/webssl-dino300m-full2b-224",
+        "facebook/webssl-mae300m-full2b-224",
     ]
 
     for prefix in valid_model_prefixes:

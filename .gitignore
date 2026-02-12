@@ -9,7 +9,6 @@ mmprojector_and_visionhead.pth
 *.code-workspace
 
 # Downloaded files
-*.whl
 wds_*.json
 
 # Inference outputs

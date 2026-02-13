@@ -152,9 +152,7 @@ class SiglipVisionTower(ClipVisionTower):
         # if self.normalize_vision:
         #     image_features = F.normalize(image_features, p=2, dim=-1)
 
-        if self.normalize_vision:
-            # image_features = self.layer_norm(image_features)
-            image_features = F.layer_norm(image_features, (self._hidden_size,), weight=None, bias=None, eps=1e-6)
+        image_features = F.layer_norm(image_features, (self._hidden_size,), weight=None, bias=None, eps=1e-6)
 
 
         return image_features

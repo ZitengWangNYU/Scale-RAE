@@ -90,7 +90,7 @@ class RectifiedFlowProjector(nn.Module):
     """
     deprecated
     """
-    def __init__(self, z_channels: int, diffusion_channels: int, diffusion_tokens: int, split_per_token: int = 1, inference_step: int = 25, guidance_scale: float = 1.0, cfg_interval: list[float, float] = [-1e4, 1e4], model_hidden_size: int = 1152, model_depth: int = 28, model_heads: int = 16, class_dropout_prob: float = .0, use_mlp: bool = False, base_dim: int = 4096):
+    def __init__(self, z_channels: int, diffusion_channels: int, diffusion_tokens: int, split_per_token: int = 1, inference_step: int = 25, guidance_scale: float = 1.0, cfg_interval: list[float, float] = [-1e4, -1e4], model_hidden_size: int = 1152, model_depth: int = 28, model_heads: int = 16, class_dropout_prob: float = .0, use_mlp: bool = False, base_dim: int = 4096):
         """
         a rectified flow + lightningDiT model, conditioned on z_channels
 
@@ -367,7 +367,7 @@ class RectifiedFlowProjector(nn.Module):
 
 
 class FullSequenceRectifiedFlowProjector(nn.Module):
-    def __init__(self, z_channels: int, diffusion_channels: int, diffusion_tokens: int, inference_step: int = 25, guidance_scale: float = 1.0, cfg_interval: list[float, float] = [-1e4, 1e4], model_hidden_size: int = 1152, model_depth: int = 28, model_heads: int = 16, class_dropout_prob: float = .0, use_mlp: bool = False, batchnorm_path: str = None, base_dim: int = 4096, **model_kwargs):
+    def __init__(self, z_channels: int, diffusion_channels: int, diffusion_tokens: int, inference_step: int = 25, guidance_scale: float = 1.0, cfg_interval: list[float, float] = [-1e4, -1e4], model_hidden_size: int = 1152, model_depth: int = 28, model_heads: int = 16, class_dropout_prob: float = .0, use_mlp: bool = False, batchnorm_path: str = None, base_dim: int = 4096, **model_kwargs):
         """
         a rectified flow + lightningDiT model, conditioned on z_channels
 
